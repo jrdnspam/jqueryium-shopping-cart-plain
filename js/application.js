@@ -6,7 +6,7 @@ $(document).ready(function () {
   var $addPrice = $('.add-price');
   var $addQuantity = $('.add-quantity');
   var $totalPrice = $('#total-price');
-
+  var $btnRemove = $('.btn.remove');
   // function to update subtotal and return calculated value
   function updateSubtotal() {
     var cost = parseFloat($(this).find('.price').text());
@@ -25,6 +25,7 @@ $(document).ready(function () {
     var totalSum = subtotals.reduce((a, b) => a + b, 0); // reduce function to sum up subtotal array
     $totalPrice.text(totalSum); // injects total sum into DOM at the $totalPrice element
   }
+  // new row event listener
   $('#add-item').on('submit', function (event) {
     event.preventDefault(); 
     var addProduct = $addProduct.val();
@@ -33,14 +34,13 @@ $(document).ready(function () {
 
     if (addProduct && !isNaN(addPrice) && !isNaN(addQuantity)) {
       var subtotalValue = (addPrice * addQuantity)
-      
       // new row HTML
       var newRow = `<tr>
         <td class="product">${addProduct}</td>
         <td class="price">${addPrice}</td>
-        <td class "quantity">${addQuantity}</td>
+        <td class="quantity">${addQuantity}</td>
         <td class="subtotal">${subtotalValue}</td>
-        <td><button class="btn btn-warning btn-sm remove">Remove</button></td>
+        <td><button class="btn btn-warning btn-sm remove">remove</button></td>
       </tr>`;
 
       $tbody.append(newRow); // adds new row to last line of table
@@ -52,5 +52,11 @@ $(document).ready(function () {
       updateTotalPrice(); // calls updateTotalPrice function after button click
     }
   });
+  // remove row event listener
+$btnRemove.on('click', function(event) {
+  $(this).closest('tr').remove();
+  updateTotalPrice
+})
+
   updateTotalPrice(); // calls updateTotalPrice function at end of document ready after eveyrthing has loaded
 });
