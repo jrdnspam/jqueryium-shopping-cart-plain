@@ -1,36 +1,56 @@
-var updateSub = function (ele) {
-  var cost = $(ele).children().first().next().text(); // assigns a var cost to price elements
-    var quant = $(ele).children().first().next().next().text(); // assigns a var quant to the quantity elements
-
-    var subTotal = cost * quant; // calculating the subtotal
-
-    $(ele).children('.subtotal').html(subTotal); // injecting subtotal into the HTML
-
-    return subTotal;
-}
-
-var updateTotalPrice = function () {
-  var totalPrice = 0;
-  $('tbody tr').each(function (i, ele) {
-    var subTotal = updateSub(ele);
-    totalPrice += subTotal;
-  });
-  $('#total-price').html(totalPrice);
-  return totalPrice;
-}
-  
-
-// ready function
 $(document).ready(function () {
-  // gets all the tr elements that are in tbody. 
-  // in html these are all the rows of products
-  $('tbody tr').each(function (i, ele) {
-    
-    
-    var subTotal = updateSub(ele); // call the updateSub function and assign that value to subtotal in each row
+  // selectors for frequntly used elements
 
-    console.log(totalPrice)
+  var $tbody = $('tbody');
+  var $addProduct = $('.add-product');
+  var $addPrice = $('.add-price');
+  var $addQuantity = $('.add-quantity');
+  var $totalPrice = $('#total-price');
 
+  // function to update subtotal and return calculated value
+  function updateSubtotal() {
+    var cost = parseFloat($(this).find('.price').text());
+    var quant = parseFloat($(this).find('.quantity').text());
+    var subTotal = cost * quant;
+    $(this).find('.subtotal').text(subTotal); // injects calculated subtotal into DOM
+    return subTotal;
+  }
+// function to calculate and update the total sum of subtotals
+  function updateTotalPrice() {
+    var subtotals = []; // empty array to hold subtotals
+    $tbody.find('tr').each(function () {
+      subtotals.push(updateSubtotal.call(this));
+    });
+
+    var totalSum = subtotals.reduce((a, b) => a + b, 0); // reduce function to sum up subtotal array
+    $totalPrice.text(totalSum); // injects total sum into DOM at the $totalPrice element
+  }
+  $('#add-item').on('submit', function (event) {
+    event.preventDefault(); 
+    var addProduct = $addProduct.val();
+    var addPrice = parseFloat($addPrice.val());
+    var addQuantity = parseFloat($addQuantity.val());
+
+    if (addProduct && !isNaN(addPrice) && !isNaN(addQuantity)) {
+      var subtotalValue = (addPrice * addQuantity)
+      
+      // new row HTML
+      var newRow = `<tr>
+        <td class="product">${addProduct}</td>
+        <td class="price">${addPrice}</td>
+        <td class "quantity">${addQuantity}</td>
+        <td class="subtotal">${subtotalValue}</td>
+        <td><button class="btn btn-warning btn-sm remove">Remove</button></td>
+      </tr>`;
+
+      $tbody.append(newRow); // adds new row to last line of table
+
+      $addProduct.val('');
+      $addPrice.val('');
+      $addQuantity.val(''); // resets the form field after input
+
+      updateTotalPrice(); // calls updateTotalPrice function after button click
+    }
   });
+  updateTotalPrice(); // calls updateTotalPrice function at end of document ready after eveyrthing has loaded
 });
-
