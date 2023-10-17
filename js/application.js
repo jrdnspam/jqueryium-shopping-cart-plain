@@ -6,7 +6,6 @@ $(document).ready(function () {
   var $addPrice = $('.add-price');
   var $addQuantity = $('.add-quantity');
   var $totalPrice = $('#total-price');
-  var $btnRemove = $('.btn.remove');
   // function to update subtotal and return calculated value
   function updateSubtotal() {
     var cost = parseFloat($(this).find('.price').text());
@@ -47,15 +46,16 @@ $(document).ready(function () {
 
       $addProduct.val('');
       $addPrice.val('');
-      $addQuantity.val(''); // resets the form field after input
+      $addQuantity.val(''); // resets the form field after new input
 
       updateTotalPrice(); // calls updateTotalPrice function after button click
     }
   });
+
   // remove row event listener
-$btnRemove.on('click', function(event) {
+$('tbody').on('click', '.btn.remove', function(event) {
   $(this).closest('tr').remove();
-  updateTotalPrice
+  updateTotalPrice();
 })
 
   updateTotalPrice(); // calls updateTotalPrice function at end of document ready after eveyrthing has loaded
